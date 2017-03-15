@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -108,7 +107,7 @@ public class BasicPersistentEntity<T, P extends PersistentProperty<P>> implement
 		this.properties = new ArrayList<>();
 		this.comparator = comparator;
 		this.constructor = new PreferredConstructorDiscoverer<>(this).getConstructor();
-		this.associations = comparator.<Set<Association<P>>>map(it -> new TreeSet<>(new AssociationComparator<>(it)))
+		this.associations = comparator.<Set<Association<P>>> map(it -> new TreeSet<>(new AssociationComparator<>(it)))
 				.orElseGet(HashSet::new);
 
 		this.propertyCache = new HashMap<>();
@@ -274,17 +273,6 @@ public class BasicPersistentEntity<T, P extends PersistentProperty<P>> implement
 		return Optional.ofNullable(propertyCache.get(name));
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.springframework.data.mapping.PersistentEntity#getRequiredPersistentProperty(java.lang.String)
-	 */
-	@Override
-	public P getRequiredPersistentProperty(String name) {
-
-		return getPersistentProperty(name).orElseThrow(
-				() -> new IllegalArgumentException(String.format("No property %s found for type %s!", name, getType())));
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.springframework.data.mapping.PersistentEntity#getPersistentProperty(java.lang.Class)
@@ -436,8 +424,8 @@ public class BasicPersistentEntity<T, P extends PersistentProperty<P>> implement
 	public PersistentPropertyAccessor getPropertyAccessor(Object bean) {
 
 		Assert.notNull(bean, "Target bean must not be null!");
-		Assert.isTrue(getType().isInstance(bean), () ->
-				String.format(TYPE_MISMATCH, bean.getClass().getName(), getType().getName()));
+		Assert.isTrue(getType().isInstance(bean),
+				() -> String.format(TYPE_MISMATCH, bean.getClass().getName(), getType().getName()));
 
 		return propertyAccessorFactory.getPropertyAccessor(this, bean);
 	}
