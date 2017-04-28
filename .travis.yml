@@ -12,7 +12,7 @@ env:
 matrix:
   include:
     - jdk: oraclejdk9
-    - env: PROFILE=jdk9
+      env: PROFILE=jdk9
 
 
 addons:
