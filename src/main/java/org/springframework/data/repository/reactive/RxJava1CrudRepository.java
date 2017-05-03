@@ -110,7 +110,7 @@ public interface RxJava1CrudRepository<T, ID> extends Repository<T, ID> {
 	 * @param ids must not be {@literal null}.
 	 * @return the found entities.
 	 */
-	Observable<T> findAll(Iterable<ID> ids);
+	Observable<T> findAllById(Iterable<ID> ids);
 
 	/**
 	 * Returns all instances of the type with the given IDs.
@@ -118,7 +118,7 @@ public interface RxJava1CrudRepository<T, ID> extends Repository<T, ID> {
 	 * @param idStream must not be {@literal null}.
 	 * @return the found entities.
 	 */
-	Observable<T> findAll(Observable<ID> idStream);
+	Observable<T> findAllById(Observable<ID> idStream);
 
 	/**
 	 * Returns the number of entities available.

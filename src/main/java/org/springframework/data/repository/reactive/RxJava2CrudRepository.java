@@ -113,7 +113,7 @@ public interface RxJava2CrudRepository<T, ID> extends Repository<T, ID> {
 	 * @param ids must not be {@literal null}.
 	 * @return the found entities.
 	 */
-	Flowable<T> findAll(Iterable<ID> ids);
+	Flowable<T> findAllById(Iterable<ID> ids);
 
 	/**
 	 * Returns all instances of the type with the given IDs.
@@ -121,7 +121,7 @@ public interface RxJava2CrudRepository<T, ID> extends Repository<T, ID> {
 	 * @param idStream must not be {@literal null}.
 	 * @return the found entities.
 	 */
-	Flowable<T> findAll(Flowable<ID> idStream);
+	Flowable<T> findAllById(Flowable<ID> idStream);
 
 	/**
 	 * Returns the number of entities available.
