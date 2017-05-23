@@ -25,12 +25,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,8 +86,9 @@ public class Jsr310ConvertersUnitTests {
 		public void convertsLocalDateTimeToDate() {
 
 			LocalDateTime now = LocalDateTime.now();
-			assertThat(format(CONVERSION_SERVICE.convert(now, Date.class), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
-					.isEqualTo(now.toString());
+
+			assertThat(CONVERSION_SERVICE.convert(now, Date.class)) //
+					.matches(temporal(now, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
 		}
 
 		@Test // DATACMNS-606
@@ -108,7 +112,10 @@ public class Jsr310ConvertersUnitTests {
 		public void convertsLocalTimeToDate() {
 
 			LocalTime now = LocalTime.now();
-			assertThat(format(CONVERSION_SERVICE.convert(now, Date.class), "HH:mm:ss.SSS")).isEqualTo(now.toString());
+
+			assertThat(CONVERSION_SERVICE.convert(now, Date.class)) //
+					.matches(temporal(now, "HH:mm:ss.SSS"));
+
 		}
 
 		@Test // DATACMNS-623
@@ -140,6 +147,13 @@ public class Jsr310ConvertersUnitTests {
 
 		private static String format(Date date, String format) {
 			return new SimpleDateFormat(format).format(date);
+		}
+
+
+		private static Predicate<Date> temporal(Temporal expected, String format) {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+			return d -> format(d, format).equals(formatter.format(expected));
 		}
 	}
 
