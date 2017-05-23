@@ -55,6 +55,7 @@ import org.springframework.data.convert.Jsr310ConvertersUnitTests.PeriodConversi
  * 
  * @author Oliver Gierke
  * @author Barak Schoster
+ * @author Jens Schauder
  */
 @RunWith(Suite.class)
 @SuiteClasses({ CommonTests.class, DurationConversionTests.class, PeriodConversionTests.class })
@@ -78,43 +79,42 @@ public class Jsr310ConvertersUnitTests {
 
 		@Test // DATACMNS-606
 		public void convertsDateToLocalDateTime() {
-			assertThat(CONVERSION_SERVICE.convert(NOW, LocalDateTime.class).toString())
-					.isEqualTo(format(NOW, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
+
+			assertThat(CONVERSION_SERVICE.convert(NOW, LocalDateTime.class)) //
+					.matches(date(NOW, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
 		}
 
 		@Test // DATACMNS-606
 		public void convertsLocalDateTimeToDate() {
 
 			LocalDateTime now = LocalDateTime.now();
-
 			assertThat(CONVERSION_SERVICE.convert(now, Date.class)) //
 					.matches(temporal(now, "yyyy-MM-dd'T'HH:mm:ss.SSS"));
 		}
 
 		@Test // DATACMNS-606
 		public void convertsDateToLocalDate() {
-			assertThat(CONVERSION_SERVICE.convert(NOW, LocalDate.class).toString()).isEqualTo(format(NOW, "yyyy-MM-dd"));
+			assertThat(CONVERSION_SERVICE.convert(NOW, LocalDate.class)).matches(date(NOW, "yyyy-MM-dd"));
 		}
 
 		@Test // DATACMNS-606
 		public void convertsLocalDateToDate() {
 
 			LocalDate now = LocalDate.now();
-			assertThat(format(CONVERSION_SERVICE.convert(now, Date.class), "yyyy-MM-dd")).isEqualTo(now.toString());
+			assertThat(CONVERSION_SERVICE.convert(now, Date.class)).matches(temporal(now, "yyyy-MM-dd"));
 		}
 
 		@Test // DATACMNS-606
 		public void convertsDateToLocalTime() {
-			assertThat(CONVERSION_SERVICE.convert(NOW, LocalTime.class).toString()).isEqualTo(format(NOW, "HH:mm:ss.SSS"));
+
+			assertThat(CONVERSION_SERVICE.convert(NOW, LocalTime.class)).matches(date(NOW, "HH:mm:ss.SSS"));
 		}
 
 		@Test // DATACMNS-606
 		public void convertsLocalTimeToDate() {
 
 			LocalTime now = LocalTime.now();
-
-			assertThat(CONVERSION_SERVICE.convert(now, Date.class)) //
-					.matches(temporal(now, "HH:mm:ss.SSS"));
+			assertThat(CONVERSION_SERVICE.convert(now, Date.class)).matches(temporal(now, "HH:mm:ss.SSS"));
 
 		}
 
@@ -149,11 +149,16 @@ public class Jsr310ConvertersUnitTests {
 			return new SimpleDateFormat(format).format(date);
 		}
 
-
 		private static Predicate<Date> temporal(Temporal expected, String format) {
 
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 			return d -> format(d, format).equals(formatter.format(expected));
+		}
+
+		private static Predicate<Temporal> date(Date expected, String format) {
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+			return d -> formatter.format(d).equals(format(expected, format));
 		}
 	}
 
